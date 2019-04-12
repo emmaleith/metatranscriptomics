@@ -99,6 +99,40 @@ In this second part, we will use a metagenomic sample of the Pampas Soil ([SRR60
 >    ```
 >
 {: .hands_on}
+**Trim Galore!** {% icon tool %} with the following parameters:
+>   - {% icon param-select %} *”Is this library paired- or single-ended?”*: ‘Paired-end’
+>   - {% icon param-file %} *”Reads in FASTQ format”*: ‘FASTQ of read 1‘
+>   - {% icon param-file %} *”Reads in FASTQ format”*: ‘FASTQ of read 2’
+>   - {% icon param-select %} *”Adapter sequence to be trimmed”*: ‘Automatic detection’
+>   - {% icon param-check %} *”Trims 1 bp off every read from its 3’ end”*: ‘No’
+>   - {% icon param-text %} *”Remove N bp from the 3’ end of read 1”*: ‘’
+>   - {% icon param-text %} *”Remove N bp from the 3’ end of read 2”*: ‘’
+>   - {% icon param-select %} *”Trim Galore! Advanced settings”*: ‘Use defaults’
+>   - {% icon param-select %} *”RRBS specific settings”*: ‘Use defaults (no RRBS)’
+
+**Filter with SortMeRNA** {% icon tool %} with the following parameters:
+>   - {% icon param-select %} *”Sequencing type”*: ‘Reads are paired’
+>   - {% icon param-file %} *”Forward reads”*: ‘Read 1: trimmed’
+>   - {% icon param-file %} *”Reverse reads”*: ‘Read 2: trimmed’
+>   - {% icon param-check %} *”If one of the paired-end reads aligns and the other one does not”*: ‘Output both reads to rejected file (--paired_out)’
+>   - {% icon param-select %} *”Which strands to search”*: ‘Search both strands’
+>   - {% icon param-select %} *”Databases to query”*: ‘Public pre-indexed ribosomal databases’
+>   - {% icon param-check %} *”rRNA databases”*: ‘Select all’
+>   - {% icon param-select %} *”Include aligned reads in FASTA/FASTQ format?”*: ‘Yes (--fastx)’
+>   - {% icon param-check %} *”Include rejected reads file?”*: ‘Yes’
+>   - {% icon param-check %} *”Generate statistics file”*: ‘No’
+>   - {% icon param-select %} *”Alignment report”*: ‘Do not report alignments’
+>   - {% icon param-text %} *”E-value threshold”*: ‘1’
+>   - {% icon param-text %} *”SW score for a match”*: ‘2’
+>   - {% icon param-text %} *”SW penalty for a mismatch”*: ‘-3’
+>   - {% icon param-text %} *”SW penalty for introducing a gap”*: ‘5’
+>   - {% icon param-text %} *”SW penalty for extending a gap”*: ‘2’
+>   - {% icon param-text %} *”SW penalty for ambiguous letters (N’s)”*: ‘-3’
+
+**FASTQ interlacer** {% icon tool %} with the following parameters:
+>   - {% icon param-select %} *”Type of paired-end datasets”*: ‘2 separate datasets’
+>   - {% icon param-file %} *”Left-hand mates”*: ‘File’
+>   - {% icon param-file %} *”Right-hand mates”*: ‘File’
 
 ## Extraction of taxonomic information
 
@@ -159,17 +193,20 @@ In this tutorial, we use the second approach with MetaPhlAn2. This tools is usin
 
 Even if the output of MetaPhlAn2 is bit easier to parse than the BIOM file, we want to visualize and explore the community structure with KRONA
 
-> ### {% icon hands_on %} Hands-on: Interactive visualization with KRONA
->
-> 1. **Format MetaPhlAn2 output for Krona** {% icon tool %} with
->    - "Input file" to `Community profile` output of `MetaPhlAn2`
->
-> 2. **KRONA pie chart** {% icon tool %} with
->    - "What is the type of your input data" as `MetaPhlan`
->    - "Input file" to the output of `Format MetaPhlAn2`
->
-{: .hands_on}
-
+> ### {% icon hands_on %} Hands-on: Interactive visualization with KRO
+**MetaPhlAn2** {% icon tool %} with the following parameters:
+>   - {% icon param-tool %} *”Input file”*: ‘FASTQ interlacer output’
+>   - {% icon param-select %} *”Database with clade-specific marker genes”*: ‘Locally cached’
+>   - {% icon param-select %} *”Cached database with clade-specific marker genes”*: ‘MetaPhlAn2 clade-specific marker genes’
+>   - {% icon param-select %} *”Type of analysis to perform”*: ‘Profiling a metagenomes in terms of relative abundances’
+>   - {% icon param-select %} *”Taxonomic level for the relative abundance output”*: ‘All taxonomic levels’
+>   - {% icon param-text %} *”Minimum total nucleotide length for the markers in a clade for estimating the abundance without considering sub-clade abundances”*: ‘2000’
+>   - {% icon param-text %} *”Sam records for aligned reads with the longest subalignment length smaller than this threshold will be discarded”*: ‘0’
+>   - {% icon param-check %} *”Profile viral organisms?”*: ‘Yes’
+>   - {% icon param-check %} *”Profile eukaryotic organisms?”*: ‘Yes’
+>   - {% icon param-check %} *”Profile bacteria organisms?”*: ‘Yes’
+>   - {% icon param-check %} *”Profile archea organisms?”*: ‘Yes’
+>   - {% icon param-text %} *”Quantile value for the robust average”*: ‘0.1’
 ## Extraction of functional information
 
 We would now like to answer the question "What are the micro-organisms doing?" or "Which functions are performed by the micro-organisms in the environment?".
@@ -227,24 +264,88 @@ HUMAnN2 generates 3 files
 
 The RPK for the gene families are quite difficult to interpret in term of relative abundance. We decide then to normalize the values
 
-> ### {% icon hands_on %} Hands-on: Normalize the gene family abundances
->
-> 1. **Renormalize a HUMAnN2 generated table** {% icon tool %} with
->    - "Gene/pathway table" to the gene family table generated with `HUMAnN2`
->    - "Normalization scheme" to `Relative abundance`
->    - "Normalization level" to `Normalization of all levels by community total`
->
->  > ### {% icon question %} Questions
->  >
->  > 1. What percentage of sequences has not be assigned to a gene family?
->  > 2. What is the most abundant gene family?
->  >
->  > > ### {% icon solution %} Solution
->  > > 1. 55% of the sequences have not be assigned to a gene family
->  > > 2. The most abundant gene family with 25% of sequences is a putative secreted protein
->  > {: .solution }
->  {: .question}
-{: .hands_on}
+**HUMAnN2** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”Input sequence file”*: ‘FASTQ interlacer joined output’
+>   - {% icon param-select %} *”Use a custom taxonomic profile”*: ‘Yes’
+>   - {% icon param-file %} *”Taxonomic profile file”*: ‘MetaPhlAn Community file’
+>   - {% icon param-select %} *”Nucleotide database”*: ‘Full’
+>   - {% icon param-select %} *”Software to use for translated alignment”*: ‘Diamond’
+>   - {% icon param-select %} *”Protein database”*: ‘Locally cached’
+>   - {% icon param-select %} *”Protein database”*: ‘Full UniRef50’
+>   - {% icon param-select %} *”Search for uniref50 or uniref90 gene families?”*: ‘uniref50’
+>   - {% icon param-select %} *”Database to use for pathway computations”*: ‘MetaCyc’
+
+**Format MetaPhlAn2 output** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”Input file”*: ‘MetaPhlAn2 Community file’
+
+**Export to GraPhlAn** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”Input file”*: ‘MetaPhlAn2 Community file’
+>   - {% icon param-select %} *”Use a LEfSe output file as input?”*: ‘No’
+>   - {% icon param-text %} *”List which levels should be annotated in the tree”*: ‘’
+>   - {% icon param-text %} *”List which levels should use the external legend for the annotation”*: ‘’
+>   - {% icon param-text %} *”List which levels should be highlight with a shaded background”*: ‘’
+>   - {% icon param-text %} *”List which of the clades that should be highlight with a shaded background”*: ‘’
+>   - {% icon param-text %} *”List of color to use for the shaded background”*: ‘’
+>   - {% icon param-text %} *”Title of the GraPhlAn plot”*: ‘’
+>   - {% icon param-text %} *”Title font size”*: ‘15’
+>   - {% icon param-text %} *”Default size  for clades that are not found as biomarkers”*: ‘10’
+>   - {% icon param-text %} *”Minimum value of clades that are biomarkers”*: ‘20’
+>   - {% icon param-text %} *”Maximum value of clades that are biomarkers”*: ‘200’
+>   - {% icon param-text %} *”Default font size”*: ‘10’
+>   - {% icon param-text %} *”Minimum font size”*: ‘8’
+>   - {% icon param-text %} *”Maximum font size”*: ‘12’
+>   - {% icon param-text %} *”Font size for the annotation legend”*: ‘10’
+>   - {% icon param-text %} *”Minimum abundance value for a clade to be annotated”*: ‘20.0’
+>   - {% icon param-text %} *”Number of clades to highlight”*: ‘’
+>   - {% icon param-text %} *”Minimum number of biomarkers to extract”*: ‘’
+>   - {% icon param-text %} *”Row number containing the names of the features”*: ‘0’
+>   - {% icon param-text %} *”Row containing the names of the samples”*: ‘0’
+>   - {% icon param-text %} *”Row number to use as metadata”*: ‘’
+>   - {% icon param-text %} *”Row number to skip from the input file”*: ‘’
+>   - {% icon param-text %} *”Percentile of sample value distribution for sample selection”*: ‘’
+>   - {% icon param-text %} *”Percentile of feature value distribution for sample selection”*: ‘’
+>   - {% icon param-text %} *”Number of top samples to select”*: ‘’
+>   - {% icon param-text %} *”Number of top features to select”*: ‘’
+
+**Format MetaPhlAn2 output** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”Input file (MetaPhlAN2 output)”*: ‘MetaPhlAn2 Community File’
+
+**Group abundances** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”HUMAnN2 output with UniRef 50 gene family abundance”*: ‘HUMAnN2 Gene families and their abundance file’
+>   - {% icon param-check %} *”Use a custom Gene Ontology file?”*: ‘No’
+>   - {% icon param-check %} *”Use a custom slim Gene Ontology file?”*: ‘No’
+>   - {% icon param-check %} *”Use a custom correspondence between UniReg50 and precise GO?”*: ‘No’   
+
+**Create a genus level gene families file** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”Gene families input table”*: ‘HUMAnN2 Gene families and their abundance file’
+
+**Combine MetaPhlAn2 and HUMAnN2 outputs** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”Input file corresponding to MetaPhlAN2 output”*: ‘MetaPhlAn2 Community File’
+>   - {% icon param-file %} *”Input file corresponding HUMAnN2 output”*: ‘HUMAnN2 Gene families and their abundance file’
+>   - {% icon param-select %} *”Type of characteristics in HUMAnN2 file”*: ‘Gene families’
+ **Combine MetaPhlAn2 and HUMAnN2 outputs** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”Input file corresponding to MetaPhlAN2 output”*: ‘MetaPhlAn2 Community File’
+>   - {% icon param-file %} *”Input file corresponding HUMAnN2 output”*: ‘HUMAnN2 Pathways and their abundance file’
+>   - {% icon param-select %} *”Type of characteristics in HUMAnN2 file”*: ‘Gene families’
+
+ **Generation, personalization and annotation of tree** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”Input tree”*: ‘Export to GraPhlAn Tree output’
+>   - {% icon param-file %} *”Annotation file”*: ‘Export to GraPhlAn Annotation output’
+
+ **Krona Pie chart** {% icon tool %} with the following parameters:
+>   - {% icon param-select %} *”What is the type of your input data”*: ‘Tabular’
+>   - {% icon param-file %} *”Input file”*: ‘Format MetaPhlAn2 Krona output’
+>   - {% icon param-text %} *”Provide a name for the basal rank”*: ‘Root’
+>   - {% icon param-check %} *”Combine data from multiple datasets”*: ‘No’
+
+**GraPhlAn** {% icon tool %} with the following parameters:
+>   - {% icon param-file %} *”Input tree”*: ‘Generation, personalization and annotation of tree output’
+>   - {% icon param-select %} *”Output format”*: ‘PNG’
+>   - {% icon param-text %} *”Dpi of the output image”*: ‘’
+>   - {% icon param-text %} *”Size of the output image”*: ‘7’
+>   - {% icon param-text %} *”Distance between the most external graphical element and the border of the image”*: ‘’
+
+
 
 With the previous analyses, we investigate "Which micro-organims are present in my sample?" and "What function are performed by the micro-organisms in my sample?". We can go further in these analyses (for example, with a combination of functional and taxonomic results). We did not detail that in this tutorial but you can find more analyses in our tutorials on shotgun metagenomic data analyses.
 
