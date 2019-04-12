@@ -1,24 +1,27 @@
 ---
 layout: tutorial_hands_on
 
-title: "Analyses of metagenomics data - The global picture"
-zenodo_link: "https://doi.org/10.5281/zenodo.815875"
+title: "Analyses of metatranscriptomics data -ASAIM"
+zenodo_link: ""
 questions:
-  - "How to analyze metagenomics data?"
-  - "What information can be extracted of metagenomics data?"
-  - "What is the difference between amplicon and shotgun data?"
-  - "What are the difference in the analyses of amplicon and shotgun data?"
+  - "How to analyze metatranscriptomics data?"
+  - "What information can be extracted of metatranscriptomics data?"
+  - " How to assign taxa and function to the identified sequences?"
 objectives:
   - "Choosing the best approach to analyze metagenomics data"
   - "Selection of tools to analyze amplicon data or shotgun data"
   - "Visualisation of a community structure"
 time_estimation: "2H30M"
 key_points:
-  - "With amplicon data, we can extract information about the studied community structure"
   - "With shotgun data, we can extract information about the studied community structure and also the functions realised by the community"
-  - "The tools used to analyze amplicon and shotgun data are different, except for the visualisation"
   - "Metagenomics data analyses are complex and time-consuming"
 contributors:
+  - subinamehta
+  - emmaleith
+  - pratikdjagtap
+  - praveenkuman
+  - jrsajulga
+  - timgriffin
   - shiltemann
   - bebatut
 ---
