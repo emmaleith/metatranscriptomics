@@ -8,13 +8,12 @@ questions:
   - "What information can be extracted of metatranscriptomics data?"
   - " How to assign taxa and function to the identified sequences?"
 objectives:
-  - "Choosing the best approach to analyze metagenomics data"
-  - "Selection of tools to analyze amplicon data or shotgun data"
+  - "Choosing the best approach to analyze metatranscriptomics data"
   - "Visualisation of a community structure"
-time_estimation: "2H30M"
+time_estimation: "4H"
 key_points:
   - "With shotgun data, we can extract information about the studied community structure and also the functions realised by the community"
-  - "Metagenomics data analyses are complex and time-consuming"
+  - "Metatranscriptomics data analyses are complex and time-consuming"
 contributors:
   - subinamehta
   - emmaleith
